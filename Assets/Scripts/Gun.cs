@@ -10,10 +10,11 @@ public class Gun : MonoBehaviour
   public Camera fpsCam;
   public ParticleSystem muzzleFlash;
   public GameObject impactEffect;
+  public GameObject bullet;
+  public Transform bulletSpawn;
 
   private float nextTimeToFire = 0f;
 
-  // Update is called once per frame
   void Update()
   {
     if (Input.GetButton("Fire1") && Time.time >= nextTimeToFire)
@@ -26,11 +27,11 @@ public class Gun : MonoBehaviour
   void Shoot()
   {
     muzzleFlash.Play();
+    GameObject bulletGO = Instantiate(bullet, bulletSpawn.position, Quaternion.LookRotation(bulletSpawn.transform.up, bulletSpawn.transform.forward));
 
     RaycastHit hit;
     if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out hit, range))
     {
-      Debug.Log(hit.transform.name);
       GunTarget target = hit.transform.GetComponent<GunTarget>();
 
       if (target != null)
@@ -46,5 +47,6 @@ public class Gun : MonoBehaviour
       GameObject impactGO = Instantiate(impactEffect, hit.point, Quaternion.LookRotation(hit.normal));
       Destroy(impactGO, 2f);
     }
+    Destroy(bulletGO, 5f);
   }
 }
